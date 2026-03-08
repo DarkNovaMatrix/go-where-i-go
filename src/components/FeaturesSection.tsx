@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Map, Compass, CloudSun, Backpack, BookOpen, Shield, Users, Route, Globe } from "lucide-react";
+import TiltCard from "@/components/TiltCard";
 
 const features = [
   {
@@ -63,7 +64,11 @@ const item = {
 
 const FeaturesSection = () => {
   return (
-    <section className="py-32 relative">
+    <section className="py-32 relative" id="features">
+      {/* Ambient glow */}
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-accent/5 blur-[150px] pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
+
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -90,20 +95,18 @@ const FeaturesSection = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {features.map((feature) => (
-            <motion.div
-              key={feature.title}
-              variants={item}
-              className="group glass-card rounded-xl p-8 hover:border-primary/20 transition-all duration-300"
-            >
-              <div className="w-12 h-12 rounded-lg bg-gradient-forest flex items-center justify-center mb-5">
-                <feature.icon className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-display font-semibold text-xl text-foreground mb-3">
-                {feature.title}
-              </h3>
-              <p className="font-body text-muted-foreground leading-relaxed text-sm">
-                {feature.description}
-              </p>
+            <motion.div key={feature.title} variants={item}>
+              <TiltCard className="glass-card rounded-xl p-8 h-full hover:border-primary/30 transition-all duration-300 cursor-pointer group">
+                <div className="w-12 h-12 rounded-lg bg-gradient-forest flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                  <feature.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-display font-semibold text-xl text-foreground mb-3 group-hover:text-primary transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="font-body text-muted-foreground leading-relaxed text-sm">
+                  {feature.description}
+                </p>
+              </TiltCard>
             </motion.div>
           ))}
         </motion.div>
