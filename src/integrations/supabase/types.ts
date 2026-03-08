@@ -14,7 +14,302 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          image_url: string | null
+          item_count: number | null
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          item_count?: number | null
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          item_count?: number | null
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      destinations: {
+        Row: {
+          avg_rating: number | null
+          best_season: string | null
+          category_id: string | null
+          continent: string | null
+          country: string | null
+          created_at: string
+          description: string | null
+          difficulty: string | null
+          distance_km: number | null
+          duration: string | null
+          elevation_m: number | null
+          gallery: string[] | null
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          is_trending: boolean | null
+          latitude: number | null
+          location: string | null
+          longitude: number | null
+          review_count: number | null
+          slug: string
+          source_url: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          avg_rating?: number | null
+          best_season?: string | null
+          category_id?: string | null
+          continent?: string | null
+          country?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          distance_km?: number | null
+          duration?: string | null
+          elevation_m?: number | null
+          gallery?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_trending?: boolean | null
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          review_count?: number | null
+          slug: string
+          source_url?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          avg_rating?: number | null
+          best_season?: string | null
+          category_id?: string | null
+          continent?: string | null
+          country?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          distance_km?: number | null
+          duration?: string | null
+          elevation_m?: number | null
+          gallery?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_trending?: boolean | null
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          review_count?: number | null
+          slug?: string
+          source_url?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "destinations_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          experience_level: string | null
+          id: string
+          interests: string[] | null
+          location: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          experience_level?: string | null
+          id?: string
+          interests?: string[] | null
+          location?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          experience_level?: string | null
+          id?: string
+          interests?: string[] | null
+          location?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          content: string | null
+          created_at: string
+          destination_id: string
+          helpful_count: number | null
+          id: string
+          photos: string[] | null
+          rating: number
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          destination_id: string
+          helpful_count?: number | null
+          id?: string
+          photos?: string[] | null
+          rating: number
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          destination_id?: string
+          helpful_count?: number | null
+          id?: string
+          photos?: string[] | null
+          rating?: number
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_destination_id_fkey"
+            columns: ["destination_id"]
+            isOneToOne: false
+            referencedRelation: "destinations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_destinations: {
+        Row: {
+          created_at: string
+          destination_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          destination_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          destination_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_destinations_destination_id_fkey"
+            columns: ["destination_id"]
+            isOneToOne: false
+            referencedRelation: "destinations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trips: {
+        Row: {
+          created_at: string
+          description: string | null
+          destination_id: string | null
+          end_date: string | null
+          gear_checklist: Json | null
+          id: string
+          is_public: boolean | null
+          notes: string | null
+          start_date: string | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          destination_id?: string | null
+          end_date?: string | null
+          gear_checklist?: Json | null
+          id?: string
+          is_public?: boolean | null
+          notes?: string | null
+          start_date?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          destination_id?: string | null
+          end_date?: string | null
+          gear_checklist?: Json | null
+          id?: string
+          is_public?: boolean | null
+          notes?: string | null
+          start_date?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trips_destination_id_fkey"
+            columns: ["destination_id"]
+            isOneToOne: false
+            referencedRelation: "destinations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
