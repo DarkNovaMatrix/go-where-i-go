@@ -8,6 +8,8 @@ import AuthPage from "./pages/AuthPage";
 import ExplorePage from "./pages/ExplorePage";
 import DestinationPage from "./pages/DestinationPage";
 import DashboardPage from "./pages/DashboardPage";
+import GuidesPage from "./pages/GuidesPage";
+import SafetyPage from "./pages/SafetyPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
