@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useDestinations, useCategories } from "@/hooks/useDestinations";
 import { motion } from "framer-motion";
+import IconicPlacesSection from "@/components/IconicPlacesSection";
+import WildAwardsSection from "@/components/WildAwardsSection";
+import NearYouSection from "@/components/NearYouSection";
+import InterestPicksSection from "@/components/InterestPicksSection";
 import { Search, MapPin, Star, Filter, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
