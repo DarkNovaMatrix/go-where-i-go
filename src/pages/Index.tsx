@@ -4,6 +4,10 @@ import ExploreSearchSection from "@/components/ExploreSearchSection";
 import CategoriesSection from "@/components/CategoriesSection";
 import StatsSection from "@/components/StatsSection";
 import TrendingSection from "@/components/TrendingSection";
+import IconicPlacesSection from "@/components/IconicPlacesSection";
+import WildAwardsSection from "@/components/WildAwardsSection";
+import NearYouSection from "@/components/NearYouSection";
+import InterestPicksSection from "@/components/InterestPicksSection";
 import FeaturesSection from "@/components/FeaturesSection";
 import AppShowcaseSection from "@/components/AppShowcaseSection";
 import PerfectForSection from "@/components/PerfectForSection";
@@ -19,6 +23,10 @@ const Index = () => {
       <CategoriesSection />
       <StatsSection />
       <TrendingSection />
+      <IconicPlacesSection />
+      <WildAwardsSection />
+      <NearYouSection />
+      <InterestPicksSection />
       <FeaturesSection />
       <AppShowcaseSection />
       <PerfectForSection />
