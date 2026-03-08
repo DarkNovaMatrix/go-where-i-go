@@ -1,10 +1,30 @@
 import { motion } from "framer-motion";
-import { Mountain, Menu, X, Download } from "lucide-react";
+import { Mountain, Menu, X, Download, User } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+
+  const navItems = isHome
+    ? [
+        { label: "Explore", href: "/explore" },
+        { label: "Destinations", href: "/explore" },
+        { label: "Features", href: "#features" },
+        { label: "Guides", href: "#" },
+        { label: "Safety", href: "#" },
+      ]
+    : [
+        { label: "Home", href: "/" },
+        { label: "Explore", href: "/explore" },
+        { label: "Features", href: "/#features" },
+      ];
 
   return (
     <motion.nav
@@ -14,7 +34,7 @@ const Navbar = () => {
       className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/50"
     >
       <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
           <Mountain className="w-6 h-6 text-primary" />
           <span className="font-display font-bold text-xl text-foreground">
             DRA<span className="text-gradient-amber">VIK</span>
@@ -22,32 +42,55 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-8">
-          {["Explore", "Destinations", "Features", "Guides", "Safety"].map((item) => (
+          {navItems.map((item) => (
             <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
+              key={item.label}
+              href={item.href}
+              onClick={(e) => {
+                if (!item.href.startsWith("#")) {
+                  e.preventDefault();
+                  navigate(item.href);
+                }
+              }}
               className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
             >
-              {item}
+              {item.label}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
             </a>
           ))}
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" size="sm" className="font-body text-muted-foreground hover:text-foreground">
-            Sign in
-          </Button>
-          <Button size="sm" className="bg-gradient-amber text-primary-foreground font-display font-semibold shadow-amber hover:opacity-90 transition-opacity">
+          {user ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="font-body text-muted-foreground hover:text-foreground"
+              onClick={() => navigate("/dashboard")}
+            >
+              <User className="w-4 h-4 mr-1" />
+              Dashboard
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="font-body text-muted-foreground hover:text-foreground"
+              onClick={() => navigate("/auth")}
+            >
+              Sign in
+            </Button>
+          )}
+          <Button
+            size="sm"
+            className="bg-gradient-amber text-primary-foreground font-display font-semibold shadow-amber hover:opacity-90 transition-opacity"
+          >
             <Download className="w-4 h-4 mr-1" />
             Get App
           </Button>
         </div>
 
-        <button
-          onClick={() => setOpen(!open)}
-          className="md:hidden text-foreground"
-        >
+        <button onClick={() => setOpen(!open)} className="md:hidden text-foreground">
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
@@ -56,23 +99,33 @@ const Navbar = () => {
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
           className="md:hidden px-6 pb-4 flex flex-col gap-3"
         >
-          {["Explore", "Destinations", "Features", "Guides", "Safety"].map((item) => (
+          {navItems.map((item) => (
             <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
+              key={item.label}
+              href={item.href}
               className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
-              onClick={() => setOpen(false)}
+              onClick={(e) => {
+                setOpen(false);
+                if (!item.href.startsWith("#")) {
+                  e.preventDefault();
+                  navigate(item.href);
+                }
+              }}
             >
-              {item}
+              {item.label}
             </a>
           ))}
-          <Button size="sm" className="bg-gradient-amber text-primary-foreground font-display font-semibold mt-2 w-full">
-            <Download className="w-4 h-4 mr-1" />
-            Get App
-          </Button>
+          {user ? (
+            <Button size="sm" variant="outline" className="w-full font-body" onClick={() => { setOpen(false); navigate("/dashboard"); }}>
+              Dashboard
+            </Button>
+          ) : (
+            <Button size="sm" variant="outline" className="w-full font-body" onClick={() => { setOpen(false); navigate("/auth"); }}>
+              Sign in
+            </Button>
+          )}
         </motion.div>
       )}
     </motion.nav>
