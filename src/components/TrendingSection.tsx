@@ -1,53 +1,8 @@
 import { motion } from "framer-motion";
 import { Star, MapPin, ArrowRight } from "lucide-react";
 import TiltCard from "@/components/TiltCard";
-import destPatagonia from "@/assets/dest-patagonia.jpg";
-import destNepal from "@/assets/dest-nepal.jpg";
-import destIceland from "@/assets/dest-iceland.jpg";
-import destAlps from "@/assets/dest-alps.jpg";
-
-const destinations = [
-  {
-    title: "Patagonia Circuit",
-    location: "Argentina & Chile",
-    image: destPatagonia,
-    rating: 4.9,
-    reviews: 2847,
-    difficulty: "Advanced",
-    duration: "10-14 days",
-    tag: "Trending",
-  },
-  {
-    title: "Everest Base Camp",
-    location: "Nepal",
-    image: destNepal,
-    rating: 4.8,
-    reviews: 5621,
-    difficulty: "Challenging",
-    duration: "12-16 days",
-    tag: "Most Popular",
-  },
-  {
-    title: "Laugavegur Trail",
-    location: "Iceland",
-    image: destIceland,
-    rating: 4.9,
-    reviews: 1893,
-    difficulty: "Moderate",
-    duration: "4-6 days",
-    tag: "Editor's Pick",
-  },
-  {
-    title: "Tour du Mont Blanc",
-    location: "Swiss Alps",
-    image: destAlps,
-    rating: 4.7,
-    reviews: 4102,
-    difficulty: "Moderate",
-    duration: "7-11 days",
-    tag: "Classic",
-  },
-];
+import { useDestinations } from "@/hooks/useDestinations";
+import { useNavigate } from "react-router-dom";
 
 const container = {
   hidden: {},
@@ -60,6 +15,9 @@ const item = {
 };
 
 const TrendingSection = () => {
+  const { data: destinations, isLoading } = useDestinations({ trending: true, limit: 4 });
+  const navigate = useNavigate();
+
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="absolute top-1/2 right-0 w-[500px] h-[500px] rounded-full bg-accent/3 blur-[150px] pointer-events-none" />
@@ -81,6 +39,7 @@ const TrendingSection = () => {
           </div>
           <motion.button
             whileHover={{ x: 5 }}
+            onClick={() => navigate("/explore")}
             className="hidden md:flex items-center gap-2 font-body text-primary hover:text-foreground transition-colors"
           >
             View all expeditions
@@ -88,59 +47,69 @@ const TrendingSection = () => {
           </motion.button>
         </motion.div>
 
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {destinations.map((dest) => (
-            <motion.div key={dest.title} variants={item}>
-              <TiltCard className="glass-card rounded-2xl overflow-hidden cursor-pointer group h-full">
-                <div className="relative h-52 overflow-hidden">
-                  <img
-                    src={dest.image}
-                    alt={dest.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-3 left-3">
-                    <span className="bg-primary text-primary-foreground font-body text-xs font-semibold px-3 py-1 rounded-full">
-                      {dest.tag}
-                    </span>
-                  </div>
-                  <div className="absolute top-3 right-3 glass-card rounded-full px-2 py-1 flex items-center gap-1">
-                    <Star className="w-3 h-3 text-primary fill-primary" />
-                    <span className="font-body text-xs text-foreground">{dest.rating}</span>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-display font-semibold text-lg text-foreground mb-1 group-hover:text-primary transition-colors">
-                    {dest.title}
-                  </h3>
-                  <div className="flex items-center gap-1 mb-3">
-                    <MapPin className="w-3 h-3 text-muted-foreground" />
-                    <span className="font-body text-sm text-muted-foreground">{dest.location}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex gap-3">
-                      <span className="font-body text-xs text-accent-foreground bg-accent/30 px-2 py-1 rounded">
-                        {dest.difficulty}
-                      </span>
-                      <span className="font-body text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                        {dest.duration}
-                      </span>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="glass-card rounded-2xl h-80 animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            variants={container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
+            {destinations?.map((dest: any) => (
+              <motion.div key={dest.id} variants={item}>
+                <TiltCard
+                  className="glass-card rounded-2xl overflow-hidden cursor-pointer group h-full"
+                >
+                  <div
+                    className="h-full"
+                    onClick={() => navigate(`/destination/${dest.slug}`)}
+                  >
+                    <div className="relative h-52 overflow-hidden bg-gradient-forest">
+                      {dest.image_url ? (
+                        <img src={dest.image_url} alt={dest.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-forest" />
+                      )}
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-primary text-primary-foreground font-body text-xs font-semibold px-3 py-1 rounded-full">
+                          Trending
+                        </span>
+                      </div>
+                      <div className="absolute top-3 right-3 glass-card rounded-full px-2 py-1 flex items-center gap-1">
+                        <Star className="w-3 h-3 text-primary fill-primary" />
+                        <span className="font-body text-xs text-foreground">{dest.avg_rating}</span>
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-display font-semibold text-lg text-foreground mb-1 group-hover:text-primary transition-colors">
+                        {dest.title}
+                      </h3>
+                      <div className="flex items-center gap-1 mb-3">
+                        <MapPin className="w-3 h-3 text-muted-foreground" />
+                        <span className="font-body text-sm text-muted-foreground">{dest.location}, {dest.country}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex gap-3">
+                          <span className="font-body text-xs text-accent-foreground bg-accent/30 px-2 py-1 rounded">{dest.difficulty}</span>
+                          <span className="font-body text-xs text-muted-foreground bg-muted px-2 py-1 rounded">{dest.duration}</span>
+                        </div>
+                      </div>
+                      <p className="font-body text-xs text-muted-foreground mt-3">
+                        {dest.review_count?.toLocaleString()} reviews
+                      </p>
                     </div>
                   </div>
-                  <p className="font-body text-xs text-muted-foreground mt-3">
-                    {dest.reviews.toLocaleString()} reviews
-                  </p>
-                </div>
-              </TiltCard>
-            </motion.div>
-          ))}
-        </motion.div>
+                </TiltCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </div>
     </section>
   );
