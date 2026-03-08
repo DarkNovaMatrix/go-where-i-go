@@ -1,7 +1,8 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import TiltCard from "@/components/TiltCard";
 import { useCategories } from "@/hooks/useDestinations";
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 import catTrekking from "@/assets/cat-trekking.jpg";
 import catMountaineering from "@/assets/cat-mountaineering.jpg";
 import catCamping from "@/assets/cat-camping.jpg";
@@ -18,22 +19,19 @@ const categoryImages: Record<string, string> = {
   "mountain-biking": catCycling,
 };
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-
 const CategoriesSection = () => {
   const { data: categories, isLoading } = useCategories();
   const navigate = useNavigate();
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const xLeft = useTransform(scrollYProgress, [0, 1], [-50, 50]);
+  const xRight = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
   return (
-    <section className="py-24 relative">
+    <section ref={sectionRef} className="py-24 relative overflow-hidden">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -49,18 +47,19 @@ const CategoriesSection = () => {
           </h2>
         </motion.div>
 
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
-        >
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {(isLoading ? Array.from({ length: 6 }) : categories)?.map((cat: any, i: number) =>
             isLoading ? (
               <div key={i} className="rounded-2xl h-64 animate-pulse bg-muted" />
             ) : (
-              <motion.div key={cat.id} variants={item}>
+              <motion.div
+                key={cat.id}
+                style={{ x: i % 2 === 0 ? xLeft : xRight }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+              >
                 <TiltCard
                   className="rounded-2xl overflow-hidden cursor-pointer group h-64 relative"
                 >
@@ -72,16 +71,27 @@ const CategoriesSection = () => {
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+                    {/* Reveal overlay on hover */}
+                    <motion.div
+                      initial={false}
+                      className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors duration-500"
+                    />
                     <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <h3 className="font-display font-semibold text-foreground text-lg">{cat.name}</h3>
-                      <p className="font-body text-xs text-primary">{cat.item_count?.toLocaleString()}+ trails</p>
+                      <h3 className="font-display font-semibold text-foreground text-lg group-hover:text-primary transition-colors duration-300">{cat.name}</h3>
+                      <motion.p
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        className="font-body text-xs text-primary"
+                      >
+                        {cat.item_count?.toLocaleString()}+ trails
+                      </motion.p>
                     </div>
                   </div>
                 </TiltCard>
               </motion.div>
             )
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
