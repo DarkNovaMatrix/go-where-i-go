@@ -19,10 +19,6 @@ const Index = () => {
       <CategoriesSection />
       <StatsSection />
       <TrendingSection />
-      <IconicPlacesSection />
-      <WildAwardsSection />
-      <NearYouSection />
-      <InterestPicksSection />
       <FeaturesSection />
       <AppShowcaseSection />
       <PerfectForSection />

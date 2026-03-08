@@ -157,6 +157,11 @@ const ExplorePage = () => {
           )}
         </motion.div>
       </div>
+
+      <IconicPlacesSection />
+      <WildAwardsSection />
+      <NearYouSection />
+      <InterestPicksSection />
     </div>
   );
 };
