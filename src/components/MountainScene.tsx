@@ -1,147 +1,123 @@
-import { useRef, useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Stars } from "@react-three/drei";
-import * as THREE from "three";
-
-const Terrain = () => {
-  const meshRef = useRef<THREE.Mesh>(null);
-
-  const geometry = useMemo(() => {
-    const geo = new THREE.PlaneGeometry(20, 20, 128, 128);
-    const positions = geo.attributes.position;
-    for (let i = 0; i < positions.count; i++) {
-      const x = positions.getX(i);
-      const y = positions.getY(i);
-      const height =
-        Math.sin(x * 0.5) * Math.cos(y * 0.3) * 1.8 +
-        Math.sin(x * 0.8 + y * 0.6) * 0.9 +
-        Math.cos(x * 1.2 - y * 0.4) * 0.6 +
-        Math.sin(x * 2.0 + y * 1.5) * 0.2;
-      positions.setZ(i, height);
-    }
-    geo.computeVertexNormals();
-    return geo;
-  }, []);
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.05) * 0.02;
-    }
-  });
-
-  return (
-    <mesh ref={meshRef} geometry={geometry} rotation={[-Math.PI / 2.5, 0, 0]} position={[0, -2, -3]}>
-      <meshStandardMaterial
-        color="#1a3a2a"
-        roughness={0.9}
-        metalness={0.1}
-        wireframe={false}
-        flatShading
-      />
-    </mesh>
-  );
-};
-
-const FloatingCompass = () => {
-  const ref = useRef<THREE.Group>(null);
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.y = state.clock.elapsedTime * 0.3;
-    }
-  });
-
-  return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-      <group ref={ref} position={[3.5, 1.5, -1]}>
-        <mesh>
-          <torusGeometry args={[0.3, 0.05, 16, 32]} />
-          <meshStandardMaterial color="#c8913a" metalness={0.8} roughness={0.2} />
-        </mesh>
-        <mesh rotation={[0, 0, Math.PI / 4]}>
-          <coneGeometry args={[0.15, 0.4, 4]} />
-          <meshStandardMaterial color="#c8913a" metalness={0.6} roughness={0.3} />
-        </mesh>
-      </group>
-    </Float>
-  );
-};
-
-const FloatingPeak = ({ position }: { position: [number, number, number] }) => {
-  return (
-    <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.8}>
-      <mesh position={position}>
-        <coneGeometry args={[0.6, 1.5, 4]} />
-        <meshStandardMaterial color="#2a4a3a" roughness={0.8} flatShading />
-      </mesh>
-      <mesh position={[position[0], position[1] + 0.55, position[2]]}>
-        <coneGeometry args={[0.25, 0.5, 4]} />
-        <meshStandardMaterial color="#ddd5c8" roughness={0.9} flatShading />
-      </mesh>
-    </Float>
-  );
-};
-
-const Particles = () => {
-  const points = useMemo(() => {
-    const positions = new Float32Array(200 * 3);
-    for (let i = 0; i < 200; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 20;
-      positions[i * 3 + 1] = Math.random() * 8 - 1;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
-    }
-    return positions;
-  }, []);
-
-  const ref = useRef<THREE.Points>(null);
-
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.y = state.clock.elapsedTime * 0.02;
-      const positions = ref.current.geometry.attributes.position.array as Float32Array;
-      for (let i = 0; i < 200; i++) {
-        positions[i * 3 + 1] += Math.sin(state.clock.elapsedTime + i) * 0.001;
-      }
-      ref.current.geometry.attributes.position.needsUpdate = true;
-    }
-  });
-
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[points, 3]}
-          count={200}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial size={0.03} color="#c8913a" transparent opacity={0.6} sizeAttenuation />
-    </points>
-  );
-};
+import { motion } from "framer-motion";
 
 const MountainScene = () => {
   return (
-    <div className="absolute inset-0 z-0">
-      <Canvas
-        camera={{ position: [0, 2, 8], fov: 50 }}
-        dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true }}
-        style={{ background: "transparent" }}
+    <div className="absolute inset-0 z-0 overflow-hidden">
+      {/* Animated gradient sky */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220,15%,12%)] via-[hsl(40,20%,6%)] to-[hsl(40,20%,6%)]" />
+
+      {/* Stars */}
+      {Array.from({ length: 80 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-[2px] h-[2px] rounded-full bg-foreground/40"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 50}%`,
+          }}
+          animate={{ opacity: [0.2, 0.8, 0.2] }}
+          transition={{
+            repeat: Infinity,
+            duration: 2 + Math.random() * 3,
+            delay: Math.random() * 2,
+          }}
+        />
+      ))}
+
+      {/* Mountain silhouettes */}
+      <svg
+        className="absolute bottom-0 left-0 right-0 w-full"
+        viewBox="0 0 1440 400"
+        preserveAspectRatio="none"
+        style={{ height: "60%" }}
       >
-        <fog attach="fog" args={["#0f0d08", 8, 25]} />
-        <ambientLight intensity={0.3} />
-        <directionalLight position={[5, 8, 3]} intensity={1.2} color="#c8913a" />
-        <directionalLight position={[-3, 4, -2]} intensity={0.4} color="#4a8a6a" />
-        <pointLight position={[0, 3, 0]} intensity={0.5} color="#c8913a" distance={15} />
-        <Terrain />
-        <FloatingPeak position={[-3, 0, -4]} />
-        <FloatingPeak position={[2, -0.5, -5]} />
-        <FloatingPeak position={[-1, -0.3, -6]} />
-        <FloatingCompass />
-        <Particles />
-        <Stars radius={50} depth={30} count={1500} factor={3} saturation={0.2} fade speed={0.5} />
-      </Canvas>
+        {/* Back mountain range */}
+        <motion.path
+          d="M0,400 L0,280 L120,200 L240,240 L360,160 L480,220 L600,140 L720,180 L840,120 L960,190 L1080,130 L1200,200 L1320,150 L1440,210 L1440,400 Z"
+          fill="hsl(150, 30%, 10%)"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 0.6, y: 0 }}
+          transition={{ duration: 2 }}
+        />
+        {/* Mid mountain range */}
+        <motion.path
+          d="M0,400 L0,300 L100,250 L200,280 L350,190 L500,260 L650,180 L800,240 L950,170 L1100,230 L1250,190 L1350,250 L1440,220 L1440,400 Z"
+          fill="hsl(150, 25%, 12%)"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 0.8, y: 0 }}
+          transition={{ duration: 1.5, delay: 0.3 }}
+        />
+        {/* Front mountain range */}
+        <motion.path
+          d="M0,400 L0,320 L180,260 L300,300 L450,230 L580,290 L720,220 L900,280 L1050,240 L1200,290 L1350,260 L1440,300 L1440,400 Z"
+          fill="hsl(150, 20%, 8%)"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.6 }}
+        />
+        {/* Snow caps */}
+        <motion.path
+          d="M350,190 L360,185 L370,190"
+          fill="none"
+          stroke="hsl(40,15%,80%)"
+          strokeWidth="2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          transition={{ delay: 1.5 }}
+        />
+        <motion.path
+          d="M645,180 L655,173 L665,180"
+          fill="none"
+          stroke="hsl(40,15%,80%)"
+          strokeWidth="2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          transition={{ delay: 1.7 }}
+        />
+        <motion.path
+          d="M945,170 L957,162 L968,170"
+          fill="none"
+          stroke="hsl(40,15%,80%)"
+          strokeWidth="2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          transition={{ delay: 1.9 }}
+        />
+      </svg>
+
+      {/* Floating compass element */}
+      <motion.div
+        className="absolute top-[25%] right-[15%] w-12 h-12 rounded-full border border-primary/30"
+        animate={{ y: [0, -10, 0], rotate: [0, 360] }}
+        transition={{ y: { repeat: Infinity, duration: 4 }, rotate: { repeat: Infinity, duration: 20, ease: "linear" } }}
+      >
+        <div className="absolute top-1 left-1/2 -translate-x-1/2 w-0.5 h-3 bg-primary/50 rounded-full" />
+        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0.5 h-3 bg-muted-foreground/30 rounded-full" />
+      </motion.div>
+
+      {/* Floating particles */}
+      {Array.from({ length: 15 }).map((_, i) => (
+        <motion.div
+          key={`p-${i}`}
+          className="absolute w-1 h-1 rounded-full bg-primary/30"
+          style={{
+            left: `${20 + Math.random() * 60}%`,
+            top: `${30 + Math.random() * 40}%`,
+          }}
+          animate={{
+            y: [0, -30, 0],
+            opacity: [0.2, 0.6, 0.2],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 4 + Math.random() * 4,
+            delay: Math.random() * 3,
+          }}
+        />
+      ))}
+
+      {/* Fog layer */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
     </div>
   );
 };
