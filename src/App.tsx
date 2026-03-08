@@ -8,6 +8,8 @@ import AuthPage from "./pages/AuthPage";
 import ExplorePage from "./pages/ExplorePage";
 import DestinationPage from "./pages/DestinationPage";
 import DashboardPage from "./pages/DashboardPage";
+import GuidesPage from "./pages/GuidesPage";
+import SafetyPage from "./pages/SafetyPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +26,8 @@ const App = () => (
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/destination/:slug" element={<DestinationPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/guides" element={<GuidesPage />} />
+          <Route path="/safety" element={<SafetyPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
