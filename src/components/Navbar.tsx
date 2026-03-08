@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { Mountain, Menu } from "lucide-react";
+import { Mountain, Menu, X, Download } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -21,38 +22,58 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-8">
-          {["Features", "Guides", "Safety", "About"].map((item) => (
+          {["Explore", "Destinations", "Features", "Guides", "Safety"].map((item) => (
             <a
               key={item}
               href={`#${item.toLowerCase()}`}
-              className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
             >
               {item}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
             </a>
           ))}
+        </div>
+
+        <div className="hidden md:flex items-center gap-3">
+          <Button variant="ghost" size="sm" className="font-body text-muted-foreground hover:text-foreground">
+            Sign in
+          </Button>
+          <Button size="sm" className="bg-gradient-amber text-primary-foreground font-display font-semibold shadow-amber hover:opacity-90 transition-opacity">
+            <Download className="w-4 h-4 mr-1" />
+            Get App
+          </Button>
         </div>
 
         <button
           onClick={() => setOpen(!open)}
           className="md:hidden text-foreground"
         >
-          <Menu className="w-5 h-5" />
+          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
       {open && (
-        <div className="md:hidden px-6 pb-4 flex flex-col gap-3">
-          {["Features", "Guides", "Safety", "About"].map((item) => (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="md:hidden px-6 pb-4 flex flex-col gap-3"
+        >
+          {["Explore", "Destinations", "Features", "Guides", "Safety"].map((item) => (
             <a
               key={item}
               href={`#${item.toLowerCase()}`}
-              className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
               onClick={() => setOpen(false)}
             >
               {item}
             </a>
           ))}
-        </div>
+          <Button size="sm" className="bg-gradient-amber text-primary-foreground font-display font-semibold mt-2 w-full">
+            <Download className="w-4 h-4 mr-1" />
+            Get App
+          </Button>
+        </motion.div>
       )}
     </motion.nav>
   );
