@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Search, Mountain, Compass, Tent, Waves, MapPin } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDestinations } from "@/hooks/useDestinations";
 
 const tabs = [
   { icon: Search, label: "Search All" },
@@ -14,15 +16,13 @@ const ExploreSearchSection = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const navigate = useNavigate();
+  const { data: suggestions } = useDestinations({ limit: 6 });
 
-  const suggestions = [
-    "Everest Base Camp Trek",
-    "Patagonia Circuit",
-    "Iceland Highlands",
-    "Swiss Alps Traverse",
-    "Kilimanjaro Summit",
-    "Annapurna Circuit",
-  ];
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate(`/explore${query ? `?q=${encodeURIComponent(query)}` : ""}`);
+  };
 
   return (
     <section className="py-24 relative overflow-hidden">
@@ -77,30 +77,32 @@ const ExploreSearchSection = () => {
           transition={{ delay: 0.2 }}
           className="max-w-3xl mx-auto relative"
         >
-          <div
-            className={`glass-card rounded-2xl p-2 flex items-center gap-3 transition-all duration-300 ${
-              isFocused ? "border-primary/40 shadow-amber" : ""
-            }`}
-          >
-            <div className="pl-4">
-              <MapPin className="w-5 h-5 text-primary" />
+          <form onSubmit={handleSearch}>
+            <div
+              className={`glass-card rounded-2xl p-2 flex items-center gap-3 transition-all duration-300 ${
+                isFocused ? "border-primary/40 shadow-amber" : ""
+              }`}
+            >
+              <div className="pl-4">
+                <MapPin className="w-5 h-5 text-primary" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search trails, mountains, destinations..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+                className="flex-1 bg-transparent font-body text-foreground placeholder:text-muted-foreground outline-none py-3 text-lg"
+              />
+              <button type="submit" className="bg-gradient-amber text-primary-foreground font-display font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition-opacity">
+                Explore
+              </button>
             </div>
-            <input
-              type="text"
-              placeholder="Search trails, mountains, destinations..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-              className="flex-1 bg-transparent font-body text-foreground placeholder:text-muted-foreground outline-none py-3 text-lg"
-            />
-            <button className="bg-gradient-amber text-primary-foreground font-display font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition-opacity">
-              Explore
-            </button>
-          </div>
+          </form>
 
           {/* Suggestions dropdown */}
-          {isFocused && (
+          {isFocused && suggestions && suggestions.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -110,13 +112,15 @@ const ExploreSearchSection = () => {
                 <p className="px-3 py-2 font-body text-xs text-muted-foreground uppercase tracking-widest">
                   Popular Explorations
                 </p>
-                {suggestions.map((s) => (
+                {suggestions.map((s: any) => (
                   <button
-                    key={s}
+                    key={s.id}
+                    onMouseDown={() => navigate(`/destination/${s.slug}`)}
                     className="w-full text-left px-3 py-2.5 rounded-lg font-body text-sm text-foreground hover:bg-muted transition-colors flex items-center gap-3"
                   >
                     <MapPin className="w-4 h-4 text-primary shrink-0" />
-                    {s}
+                    <span>{s.title}</span>
+                    <span className="text-xs text-muted-foreground ml-auto">{s.country}</span>
                   </button>
                 ))}
               </div>
