@@ -1,17 +1,20 @@
 import { useEffect, useRef } from "react";
 
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
+  size: number;
+  hue: number;
+}
+
 const ParticleCursor = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particles = useRef<Array<{
-    x: number;
-    y: number;
-    vx: number;
-    vy: number;
-    life: number;
-    maxLife: number;
-    size: number;
-  }>>([]);
-  const mouse = useRef({ x: 0, y: 0 });
+  const particles = useRef<Particle[]>([]);
+  const mouse = useRef({ x: -100, y: -100, prevX: -100, prevY: -100 });
   const animationRef = useRef<number>();
 
   useEffect(() => {
@@ -28,22 +31,34 @@ const ParticleCursor = () => {
     window.addEventListener("resize", resize);
 
     const handleMouse = (e: MouseEvent) => {
-      mouse.current = { x: e.clientX, y: e.clientY };
-      // Spawn particles on move
-      for (let i = 0; i < 2; i++) {
+      mouse.current.prevX = mouse.current.x;
+      mouse.current.prevY = mouse.current.y;
+      mouse.current.x = e.clientX;
+      mouse.current.y = e.clientY;
+
+      const speed = Math.hypot(
+        e.clientX - mouse.current.prevX,
+        e.clientY - mouse.current.prevY
+      );
+      const count = Math.min(Math.floor(speed / 3) + 1, 8);
+
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = 0.5 + Math.random() * 2;
         particles.current.push({
-          x: e.clientX,
-          y: e.clientY,
-          vx: (Math.random() - 0.5) * 2,
-          vy: (Math.random() - 0.5) * 2 - 1,
+          x: e.clientX + (Math.random() - 0.5) * 4,
+          y: e.clientY + (Math.random() - 0.5) * 4,
+          vx: Math.cos(angle) * velocity,
+          vy: Math.sin(angle) * velocity - 1.5,
           life: 0,
-          maxLife: 30 + Math.random() * 30,
-          size: 1 + Math.random() * 3,
+          maxLife: 25 + Math.random() * 35,
+          size: 1.5 + Math.random() * 4,
+          hue: 30 + Math.random() * 20, // amber to orange range
         });
       }
-      // Limit particles
-      if (particles.current.length > 100) {
-        particles.current = particles.current.slice(-80);
+
+      if (particles.current.length > 150) {
+        particles.current = particles.current.slice(-120);
       }
     };
 
@@ -51,21 +66,33 @@ const ParticleCursor = () => {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       particles.current = particles.current.filter((p) => {
         p.life++;
         p.x += p.vx;
         p.y += p.vy;
-        p.vy -= 0.02; // float up
+        p.vy -= 0.03;
+        p.vx *= 0.99;
 
         const progress = p.life / p.maxLife;
-        const alpha = 1 - progress;
-        const size = p.size * (1 - progress * 0.5);
+        const alpha = (1 - progress) * 0.8;
+        const size = p.size * (1 - progress * 0.6);
 
-        // Amber color: hsl(38, 65%, 58%) → rgb(209, 168, 87) approx
+        // Fire glow
+        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, size * 2);
+        gradient.addColorStop(0, `hsla(${p.hue}, 80%, 65%, ${alpha})`);
+        gradient.addColorStop(0.4, `hsla(${p.hue - 10}, 70%, 50%, ${alpha * 0.6})`);
+        gradient.addColorStop(1, `hsla(${p.hue - 20}, 60%, 30%, 0)`);
+
         ctx.beginPath();
-        ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(209, 168, 87, ${alpha * 0.6})`;
+        ctx.arc(p.x, p.y, size * 2, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Bright core
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, size * 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue + 10}, 90%, 80%, ${alpha})`;
         ctx.fill();
 
         return p.life < p.maxLife;
