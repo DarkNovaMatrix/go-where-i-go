@@ -7,6 +7,8 @@ import TrendingSection from "@/components/TrendingSection";
 import FeaturesSection from "@/components/FeaturesSection";
 import InteractiveMapSection from "@/components/InteractiveMapSection";
 import WildCompassSection from "@/components/WildCompassSection";
+import ScrollStorySection from "@/components/ScrollStorySection";
+import PhysicsPlayground from "@/components/PhysicsPlayground";
 import AppShowcaseSection from "@/components/AppShowcaseSection";
 import PerfectForSection from "@/components/PerfectForSection";
 import CTASection from "@/components/CTASection";
@@ -25,6 +27,8 @@ const Index = () => {
       <TrendingSection />
       <InteractiveMapSection />
       <FeaturesSection />
+      <ScrollStorySection />
+      <PhysicsPlayground />
       <WildCompassSection />
       <AppShowcaseSection />
       <PerfectForSection />
