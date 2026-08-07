@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Map, Compass, CloudSun, Backpack, BookOpen, Shield, Users, Route, Globe } from "lucide-react";
+import { Map, Compass, CloudSun, Backpack, BookOpen, Shield, Users, Route, Globe, Bike, Binoculars, Utensils, BatteryCharging, BellRing, Waves } from "lucide-react";
 import TiltCard from "@/components/TiltCard";
 import { useRef, useState } from "react";
 
@@ -57,6 +57,42 @@ const features = [
     title: "Country Explorer",
     description: "Discover outdoor destinations worldwide with terrain data, regulations, and local insights.",
     color: "from-accent/20 to-secondary/10",
+  },
+  {
+    icon: Bike,
+    title: "Ride & Run Routes",
+    description: "Find cycling and trail-running routes with surface details, difficulty ratings, and live elevation profiles.",
+    color: "from-primary/20 to-accent/10",
+  },
+  {
+    icon: Binoculars,
+    title: "Wildlife Watch",
+    description: "Identify nearby species and log sightings with helpful tips for observing wildlife responsibly.",
+    color: "from-secondary/25 to-primary/10",
+  },
+  {
+    icon: Utensils,
+    title: "Camp Kitchen",
+    description: "Plan lightweight meals, organize ingredients, and keep a simple fuel estimate for every night out.",
+    color: "from-accent/20 to-secondary/10",
+  },
+  {
+    icon: BatteryCharging,
+    title: "Battery Saver",
+    description: "Monitor trip power use and get smart reminders to preserve your phone for the moments that matter.",
+    color: "from-primary/15 to-secondary/15",
+  },
+  {
+    icon: BellRing,
+    title: "Trail Alerts",
+    description: "Get timely notices for closures, fire danger, wildlife activity, and changing conditions on your route.",
+    color: "from-destructive/10 to-accent/10",
+  },
+  {
+    icon: Waves,
+    title: "Water Finder",
+    description: "Locate streams, springs, and refill points along the way with seasonal availability notes.",
+    color: "from-accent/20 to-primary/10",
   },
 ];
 
