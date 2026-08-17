@@ -1,0 +1,1 @@
+COMMENT ON TABLE public.linked_devices IS 'Mobile app devices linked to a user account';
