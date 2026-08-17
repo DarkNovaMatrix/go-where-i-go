@@ -10,6 +10,7 @@ import WildCompassSection from "@/components/WildCompassSection";
 import ScrollStorySection from "@/components/ScrollStorySection";
 import PhysicsPlayground from "@/components/PhysicsPlayground";
 import AppShowcaseSection from "@/components/AppShowcaseSection";
+import CompanionAppSection from "@/components/CompanionAppSection";
 import PerfectForSection from "@/components/PerfectForSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
@@ -31,6 +32,7 @@ const Index = () => {
       <PhysicsPlayground />
       <WildCompassSection />
       <AppShowcaseSection />
+      <CompanionAppSection />
       <PerfectForSection />
       <CTASection />
       <Footer />
