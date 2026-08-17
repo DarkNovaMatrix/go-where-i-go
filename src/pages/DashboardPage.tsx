@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { User, Heart, Map, LogOut, Star, MapPin, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
+import DeviceSyncPanel from "@/components/DeviceSyncPanel";
 import { useEffect } from "react";
 
 const DashboardPage = () => {
@@ -72,6 +73,8 @@ const DashboardPage = () => {
               </h1>
               <p className="font-body text-muted-foreground">Your adventure dashboard</p>
             </div>
+
+            <DeviceSyncPanel userId={user?.id} />
 
             {/* Saved Destinations */}
             <div>
