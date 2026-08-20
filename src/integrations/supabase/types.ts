@@ -237,6 +237,8 @@ export type Database = {
       }
       reviews: {
         Row: {
+          author_avatar_url: string | null
+          author_name: string | null
           content: string | null
           created_at: string
           destination_id: string
@@ -249,6 +251,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          author_avatar_url?: string | null
+          author_name?: string | null
           content?: string | null
           created_at?: string
           destination_id: string
@@ -261,6 +265,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          author_avatar_url?: string | null
+          author_name?: string | null
           content?: string | null
           created_at?: string
           destination_id?: string
@@ -369,24 +375,7 @@ export type Database = {
       }
     }
     Views: {
-      public_profiles: {
-        Row: {
-          avatar_url: string | null
-          display_name: string | null
-          user_id: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          display_name?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          display_name?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       [_ in never]: never
