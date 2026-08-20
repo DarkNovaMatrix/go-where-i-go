@@ -196,6 +196,27 @@ export type Database = {
         }
         Relationships: []
       }
+      pairing_attempts: {
+        Row: {
+          client_key: string
+          created_at: string
+          id: string
+          succeeded: boolean
+        }
+        Insert: {
+          client_key: string
+          created_at?: string
+          id?: string
+          succeeded?: boolean
+        }
+        Update: {
+          client_key?: string
+          created_at?: string
+          id?: string
+          succeeded?: boolean
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
