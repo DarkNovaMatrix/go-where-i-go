@@ -48,24 +48,47 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
-  const { data: pairing, error: pairingError } = await admin
-    .from("device_pairing_codes")
-    .select("id, user_id, expires_at, claimed_at")
-    .eq("code", code)
-    .maybeSingle();
+  // Brute-force protection: max failed attempts per client within the window.
+  const MAX_FAILED_ATTEMPTS = 8;
+  const WINDOW_MINUTES = 15;
+  const clientKey =
+    req.headers.get("cf-connecting-ip") ??
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "unknown";
+  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60_000).toISOString();
 
-  if (pairingError) return jsonResponse({ error: "Could not verify the pairing code" }, 500);
-  if (!pairing || pairing.claimed_at || new Date(pairing.expires_at) < new Date()) {
-    return jsonResponse({ error: "This pairing code is invalid or has expired" }, 400);
+  const { count: failedAttempts } = await admin
+    .from("pairing_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("client_key", clientKey)
+    .eq("succeeded", false)
+    .gte("created_at", windowStart);
+
+  if ((failedAttempts ?? 0) >= MAX_FAILED_ATTEMPTS) {
+    return jsonResponse({ error: "Too many pairing attempts. Try again later." }, 429);
   }
 
-  const { error: claimError } = await admin
+  const recordAttempt = (succeeded: boolean) =>
+    admin.from("pairing_attempts").insert({ client_key: clientKey, succeeded });
+
+  // Atomic claim: only one caller can flip claimed_at from null.
+  const { data: claimed, error: claimError } = await admin
     .from("device_pairing_codes")
     .update({ claimed_at: new Date().toISOString() })
-    .eq("id", pairing.id)
-    .is("claimed_at", null);
+    .eq("code", code)
+    .is("claimed_at", null)
+    .gt("expires_at", new Date().toISOString())
+    .select("id, user_id")
+    .maybeSingle();
 
-  if (claimError) return jsonResponse({ error: "This pairing code was already used" }, 409);
+  if (claimError) return jsonResponse({ error: "Could not verify the pairing code" }, 500);
+  if (!claimed) {
+    await recordAttempt(false);
+    return jsonResponse({ error: "This pairing code is invalid, used or expired" }, 400);
+  }
+
+  await recordAttempt(true);
+  const pairing = claimed;
 
   const { data: device, error: deviceError } = await admin
     .from("linked_devices")

@@ -196,6 +196,27 @@ export type Database = {
         }
         Relationships: []
       }
+      pairing_attempts: {
+        Row: {
+          client_key: string
+          created_at: string
+          id: string
+          succeeded: boolean
+        }
+        Insert: {
+          client_key: string
+          created_at?: string
+          id?: string
+          succeeded?: boolean
+        }
+        Update: {
+          client_key?: string
+          created_at?: string
+          id?: string
+          succeeded?: boolean
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -237,6 +258,8 @@ export type Database = {
       }
       reviews: {
         Row: {
+          author_avatar_url: string | null
+          author_name: string | null
           content: string | null
           created_at: string
           destination_id: string
@@ -249,6 +272,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          author_avatar_url?: string | null
+          author_name?: string | null
           content?: string | null
           created_at?: string
           destination_id: string
@@ -261,6 +286,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          author_avatar_url?: string | null
+          author_name?: string | null
           content?: string | null
           created_at?: string
           destination_id?: string

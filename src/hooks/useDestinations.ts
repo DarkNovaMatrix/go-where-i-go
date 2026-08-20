@@ -68,7 +68,7 @@ export const useDestinationReviews = (destinationId: string) => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("reviews")
-        .select("*, profiles(display_name, avatar_url)")
+        .select("*")
         .eq("destination_id", destinationId)
         .order("created_at", { ascending: false });
       if (error) throw error;
