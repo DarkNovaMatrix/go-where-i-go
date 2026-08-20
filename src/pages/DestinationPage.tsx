@@ -131,10 +131,10 @@ const DestinationPage = () => {
                       <div key={review.id} className="glass-card rounded-xl p-5">
                         <div className="flex items-center gap-3 mb-3">
                           <div className="w-8 h-8 rounded-full bg-gradient-amber flex items-center justify-center font-display font-bold text-xs text-primary-foreground">
-                            {review.profiles?.display_name?.[0]?.toUpperCase() || "?"}
+                            {review.author_name?.[0]?.toUpperCase() || "?"}
                           </div>
                           <div>
-                            <p className="font-display font-semibold text-sm text-foreground">{review.profiles?.display_name}</p>
+                            <p className="font-display font-semibold text-sm text-foreground">{review.author_name || "Explorer"}</p>
                             <div className="flex gap-0.5">
                               {Array.from({ length: review.rating }).map((_, i) => (
                                 <Star key={i} className="w-3 h-3 text-primary fill-primary" />
