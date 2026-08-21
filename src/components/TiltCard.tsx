@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { forwardRef, useCallback, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 interface TiltCardProps {
@@ -7,8 +7,19 @@ interface TiltCardProps {
   glareColor?: string;
 }
 
-const TiltCard = ({ children, className = "", glareColor = "hsla(38, 65%, 58%, 0.15)" }: TiltCardProps) => {
+const TiltCard = forwardRef<HTMLDivElement, TiltCardProps>((
+  { children, className = "", glareColor = "hsla(38, 65%, 58%, 0.15)" },
+  forwardedRef,
+) => {
   const ref = useRef<HTMLDivElement>(null);
+  const setRefs = useCallback(
+    (node: HTMLDivElement | null) => {
+      ref.current = node;
+      if (typeof forwardedRef === "function") forwardedRef(node);
+      else if (forwardedRef) forwardedRef.current = node;
+    },
+    [forwardedRef],
+  );
   const [transform, setTransform] = useState("perspective(800px) rotateX(0deg) rotateY(0deg)");
   const [glarePos, setGlarePos] = useState({ x: 50, y: 50 });
   const [isHovered, setIsHovered] = useState(false);
@@ -31,7 +42,7 @@ const TiltCard = ({ children, className = "", glareColor = "hsla(38, 65%, 58%, 0
 
   return (
     <motion.div
-      ref={ref}
+      ref={setRefs}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
@@ -52,6 +63,8 @@ const TiltCard = ({ children, className = "", glareColor = "hsla(38, 65%, 58%, 0
       />
     </motion.div>
   );
-};
+});
+
+TiltCard.displayName = "TiltCard";
 
 export default TiltCard;
