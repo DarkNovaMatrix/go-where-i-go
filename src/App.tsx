@@ -10,6 +10,12 @@ import DestinationPage from "./pages/DestinationPage";
 import DashboardPage from "./pages/DashboardPage";
 import GuidesPage from "./pages/GuidesPage";
 import SafetyPage from "./pages/SafetyPage";
+import FeaturesPage from "./pages/FeaturesPage";
+import PricingPage from "./pages/PricingPage";
+import DownloadPage from "./pages/DownloadPage";
+import DocsPage from "./pages/DocsPage";
+import CommunityPage from "./pages/CommunityPage";
+import StaticInfoPage from "./pages/StaticInfoPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
