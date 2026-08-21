@@ -3,6 +3,8 @@ import { Star, MapPin, ArrowRight } from "lucide-react";
 import TiltCard from "@/components/TiltCard";
 import { useDestinations } from "@/hooks/useDestinations";
 import { useNavigate } from "react-router-dom";
+import SmartImage from "@/components/SmartImage";
+import { buildPlaceQuery } from "@/lib/media";
 
 const container = {
   hidden: {},
@@ -72,7 +74,7 @@ const TrendingSection = () => {
                   >
                     <div className="relative h-52 overflow-hidden bg-gradient-forest">
                       {dest.image_url ? (
-                        <img src={dest.image_url} alt={dest.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                        <SmartImage src={dest.image_url} query={buildPlaceQuery(dest)} alt={dest.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                       ) : (
                         <div className="w-full h-full bg-gradient-forest" />
                       )}

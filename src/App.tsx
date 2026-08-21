@@ -10,6 +10,12 @@ import DestinationPage from "./pages/DestinationPage";
 import DashboardPage from "./pages/DashboardPage";
 import GuidesPage from "./pages/GuidesPage";
 import SafetyPage from "./pages/SafetyPage";
+import FeaturesPage from "./pages/FeaturesPage";
+import PricingPage from "./pages/PricingPage";
+import DownloadPage from "./pages/DownloadPage";
+import DocsPage from "./pages/DocsPage";
+import CommunityPage from "./pages/CommunityPage";
+import StaticInfoPage from "./pages/StaticInfoPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +34,17 @@ const App = () => (
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/guides" element={<GuidesPage />} />
           <Route path="/safety" element={<SafetyPage />} />
+          <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/download" element={<DownloadPage />} />
+          <Route path="/docs" element={<DocsPage />} />
+          <Route path="/community" element={<CommunityPage />} />
+          <Route path="/about" element={<StaticInfoPage />} />
+          <Route path="/blog" element={<StaticInfoPage />} />
+          <Route path="/careers" element={<StaticInfoPage />} />
+          <Route path="/contact" element={<StaticInfoPage />} />
+          <Route path="/privacy" element={<StaticInfoPage />} />
+          <Route path="/terms" element={<StaticInfoPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

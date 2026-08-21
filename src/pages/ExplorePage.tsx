@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import TiltCard from "@/components/TiltCard";
+import SmartImage from "@/components/SmartImage";
+import { buildPlaceQuery } from "@/lib/media";
 
 const ExplorePage = () => {
   const [search, setSearch] = useState("");
@@ -117,7 +119,7 @@ const ExplorePage = () => {
                   <TiltCard className="glass-card rounded-2xl overflow-hidden cursor-pointer group h-full">
                     <div className="relative h-48 overflow-hidden bg-gradient-forest">
                       {dest.image_url && (
-                        <img src={dest.image_url} alt={dest.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                        <SmartImage src={dest.image_url} query={buildPlaceQuery(dest)} alt={dest.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                       )}
                       {dest.is_trending && (
                         <span className="absolute top-3 left-3 bg-primary text-primary-foreground font-body text-xs font-semibold px-3 py-1 rounded-full">
